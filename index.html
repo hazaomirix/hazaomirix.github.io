@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCubic — купить привилегии Minecraft</title>
+<meta name="description" content="MCubic — Minecraft сервер с 5+ режимами. Купи привилегию и получи уникальные возможности.">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--purple:#6a0dad;
+--purple-dark:#4a007a;
+--purple-light:#8b30e0;
+--blue:#00bfff;
+--blue-dark:#0080b0;
+--gold:#ffd700;
+--gold-dim:#b8860b;
+--gold-light:#ffe44d;
+--bg:#050008;
+--bg2:#0a0015;
+--bg3:#120020;
+--card:rgba(106,13,173,.04);
+--border:rgba(106,13,173,.12);
+--tx:#d0d0e0;
+--tx2:#8a8aa0;
+--success:#43b581;
+}
+
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ===== NAV ===== */
+nav{position:fixed;top:0;width:100%;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;
+background:rgba(5,0,8,.85);backdrop-filter:blur(20px) saturate(1.3);border-bottom:1px solid rgba(106,13,173,.08)}
+nav .logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+nav .logo span{font-weight:900;font-size:20px;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px}
+.nv-l{display:flex;gap:2px;align-items:center}
+.nv-l a{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;color:var(--tx2);text-decoration:none;cursor:pointer;transition:.2s}
+.nv-l a:hover{color:var(--tx);background:rgba(106,13,173,.06)}
+.nv-l a.act{color:var(--blue);background:rgba(0,191,255,.06)}
+.nv-s{display:flex;gap:4px;align-items:center}
+.nv-s a{padding:5px 10px;border-radius:8px;font-size:10px;font-weight:700;text-decoration:none;
+border:1px solid rgba(106,13,173,.1);color:var(--tx2);transition:.2s}
+.nv-s a:hover{background:var(--purple);border-color:var(--purple);color:#fff}
+
+/* ===== HERO ===== */
+.hero{min-height:90vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(.2) saturate(1.1)}
+.hero-bg .v{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,0,8,.3) 0%,rgba(5,0,8,.15) 50%,var(--bg) 95%)}
+
+/* 3D Cube */
+.cube-wrap{position:absolute;z-index:1;width:200px;height:200px;right:10%;top:25%;perspective:700px;opacity:.25;pointer-events:none}
+@media(max-width:768px){.cube-wrap{display:none}}
+.cube-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:cubeSpin 25s linear infinite}
+.cube-3d .cf{position:absolute;width:200px;height:200px;border:1px solid rgba(106,13,173,.15);background:repeating-linear-gradient(135deg,rgba(106,13,173,.04),rgba(0,191,255,.04) 20px);
+display:flex;align-items:center;justify-content:center;font-size:50px;color:rgba(0,191,255,.12)}
+.cube-3d .cf.f1{transform:translateZ(100px)}.cube-3d .cf.f2{transform:rotateY(180deg) translateZ(100px)}
+.cube-3d .cf.f3{transform:rotateY(-90deg) translateZ(100px)}.cube-3d .cf.f4{transform:rotateY(90deg) translateZ(100px)}
+.cube-3d .cf.f5{transform:rotateX(90deg) translateZ(100px)}.cube-3d .cf.f6{transform:rotateX(-90deg) translateZ(100px)}
+@keyframes cubeSpin{0%{transform:rotateX(-20deg) rotateY(0deg)}100%{transform:rotateX(-20deg) rotateY(360deg)}}
+
+.hz{position:relative;z-index:2;max-width:800px}
+.hero .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 16px;border:1px solid rgba(0,191,255,.12);border-radius:100px;font-size:10px;color:var(--blue);letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:20px;background:rgba(0,191,255,.03)}
+.hero .badge .dot{width:6px;height:6px;border-radius:50%;background:#43b581;box-shadow:0 0 10px #43b581;display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero .big{font-size:clamp(48px,9vw,100px);font-weight:900;line-height:.95;margin-bottom:6px;letter-spacing:-2px;
+background:linear-gradient(135deg,#a855f7,#6a0dad,#00bfff,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300%;animation:gradShift 8s ease-in-out infinite}
+@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero .sub{font-size:16px;color:#6a6a80;letter-spacing:5px;text-transform:uppercase;margin-bottom:12px;font-weight:500}
+.hero .desc{font-size:15px;color:rgba(200,200,210,.6);max-width:520px;margin:0 auto 20px;line-height:1.8}
+
+.online-box{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:12px;
+background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:18px;font-size:12px;color:var(--tx2)}
+.online-box .num{font-size:22px;font-weight:900;color:var(--blue);text-shadow:0 0 20px rgba(0,191,255,.15)}
+.online-box .lbl{font-size:10px;color:var(--tx2);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+
+.hero .row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
+.ipx{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;
+background:rgba(255,255,255,.02);border:1px solid rgba(106,13,173,.1);cursor:pointer;transition:.3s;font-weight:700;font-size:15px;color:var(--tx)}
+.ipx:hover{border-color:var(--purple);box-shadow:0 0 30px rgba(106,13,173,.06);transform:translateY(-2px)}
+.ipx .cp{padding:5px 12px;border-radius:8px;background:linear-gradient(135deg,var(--purple),var(--blue));border:none;color:#fff;cursor:pointer;font-size:10px;font-weight:800;transition:.2s;font-family:inherit}
+.ipx .cp:hover{filter:brightness(1.1)}
+.btn-g{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:12px;
+background:linear-gradient(135deg,var(--purple),var(--blue));border:none;color:#fff;font-weight:800;font-size:13px;cursor:pointer;transition:.3s;font-family:inherit;
+box-shadow:0 4px 20px rgba(106,13,173,.12)}
+.btn-g:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(106,13,173,.2)}
+
+/* ===== SECTION ===== */
+.s{padding:64px 20px;max-width:1100px;margin:0 auto}
+.s-l{text-align:center;font-size:10px;color:var(--blue);letter-spacing:4px;text-transform:uppercase;margin-bottom:6px;font-weight:700}
+.s-t{text-align:center;font-size:clamp(26px,4vw,38px);font-weight:900;margin-bottom:6px;letter-spacing:-.5px;
+background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.s-p{text-align:center;color:var(--tx2);max-width:500px;margin:0 auto 32px;font-size:14px;line-height:1.7}
+
+/* ===== STATS ===== */
+.st-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:0}
+.st{text-align:center;padding:28px 16px;border-radius:16px;
+background:linear-gradient(180deg,rgba(106,13,173,.03),transparent);
+border:1px solid rgba(106,13,173,.06);transition:.3s;position:relative;overflow:hidden}
+.st:hover{border-color:rgba(106,13,173,.15);transform:translateY(-4px);box-shadow:0 15px 40px rgba(0,0,0,.4)}
+.st .nm{font-size:32px;font-weight:900;color:var(--blue);text-shadow:0 0 25px rgba(0,191,255,.1)}
+.st .lb{font-size:10px;color:var(--tx2);margin-top:6px;text-transform:uppercase;letter-spacing:2px;font-weight:600}
+
+/* ===== CARDS ===== */
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.c{position:relative;padding:28px 22px;text-align:center;border-radius:18px;overflow:hidden;
+background:linear-gradient(145deg,rgba(255,255,255,.02),transparent);border:1px solid rgba(255,255,255,.04);transition:.4s}
+.c:hover{transform:translateY(-6px);border-color:rgba(106,13,173,.1);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.c .ic{font-size:30px;margin-bottom:8px;display:block;transition:.3s}
+.c:hover .ic{transform:scale(1.1)}
+.c h3{font-size:15px;font-weight:700;margin-bottom:4px;color:#d0d0e0}
+.c p{font-size:12px;color:var(--tx2);line-height:1.6}
+
+/* ===== GAME MODES ===== */
+.modes-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.mc-card{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;transition:.4s;height:200px;
+background:linear-gradient(145deg,rgba(106,13,173,.06),rgba(0,191,255,.03));border:1px solid rgba(106,13,173,.1)}
+.mc-card:hover{transform:translateY(-6px);border-color:rgba(106,13,173,.25);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.mc-card .mc-bg{position:absolute;inset:0;opacity:.15}
+.mc-card .mc-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(.5)}
+.mc-card .mc-over{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(5,0,8,.8) 100%);padding:20px;display:flex;flex-direction:column;justify-content:flex-end}
+.mc-card .mc-over .mc-ic{font-size:32px;margin-bottom:6px}
+.mc-card .mc-over h3{font-size:18px;font-weight:800;color:#d0d0e0;margin-bottom:4px}
+.mc-card .mc-over p{font-size:11px;color:var(--tx2);line-height:1.5}
+.mc-card .mc-over .mc-online{font-size:10px;color:var(--blue);font-weight:700;margin-top:4px;display:flex;align-items:center;gap:4px}
+
+/* ===== LEADERBOARD ===== */
+.ld{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.03);border-radius:16px;overflow:hidden}
+.ld-row{display:grid;grid-template-columns:40px 1fr auto;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.03);transition:.2s}
+.ld-row:hover{background:rgba(106,13,173,.03)}
+.ld-row:last-child{border:none}
+.ld-row .pos{font-size:22px;font-weight:900;color:var(--tx2);width:32px;text-align:center}
+.ld-row .pos.gold{color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.15)}
+.ld-row .pos.silver{color:#c0c0c0}
+.ld-row .pos.bronze{color:#cd7f32}
+.ld-row .info{display:flex;align-items:center;gap:10px}
+.ld-row .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
+.ld-row .name{font-size:13px;font-weight:700;color:#d0d0e0}
+.ld-row .stat{font-size:11px;color:var(--blue);font-weight:600}
+
+/* ===== GALLERY ===== */
+.gl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.gl-item{position:relative;border-radius:12px;overflow:hidden;cursor:pointer;aspect-ratio:16/10;
+background:var(--bg2);border:1px solid rgba(255,255,255,.03);transition:.4s}
+.gl-item:hover{transform:scale(1.02);border-color:rgba(106,13,173,.12);box-shadow:0 15px 40px rgba(0,0,0,.5)}
+.gl-item img{width:100%;height:100%;object-fit:cover;filter:brightness(.7);transition:.4s}
+.gl-item:hover img{filter:brightness(1)}
+.gl-item .over{position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(5,0,8,.6) 100%);display:flex;align-items:flex-end;padding:12px}
+.gl-item .over span{font-size:10px;font-weight:600;color:var(--tx)}
+.gl-item .like{position:absolute;top:10px;right:10px;font-size:10px;color:var(--tx2);background:rgba(0,0,0,.5);padding:2px 8px;border-radius:6px;backdrop-filter:blur(4px)}
+
+/* ===== NEWS ===== */
+.news-list{max-width:700px;margin:0 auto}
+.news-item{padding:18px 22px;border-radius:14px;margin-bottom:8px;
+background:rgba(255,255,255,.008);border:1px solid rgba(255,255,255,.03);transition:.3s;cursor:pointer}
+.news-item:hover{border-color:rgba(106,13,173,.06);transform:translateY(-2px)}
+.news-item .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.news-item .tag.patch{background:rgba(106,13,173,.12);color:var(--purple-light)}
+.news-item .tag.event{background:rgba(0,191,255,.1);color:var(--blue)}
+.news-item .tag.give{background:rgba(255,215,0,.1);color:var(--gold)}
+.news-item h3{font-size:14px;font-weight:700;margin-bottom:4px;color:#d0d0e0}
+.news-item p{font-size:11px;color:var(--tx2);line-height:1.5;margin-bottom:6px}
+.news-item .time{font-size:9px;color:#5a5a70;font-weight:500}
+
+/* ===== SHOP / PAYMENT ===== */
+.shop{background:linear-gradient(180deg,rgba(106,13,173,.02),rgba(0,191,255,.01));padding:64px 20px}
+.shop-inner{max-width:1100px;margin:0 auto}
+.ranks-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.serv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:24px}
+.rank-card{position:relative;padding:24px 16px 20px;text-align:center;border-radius:16px;overflow:hidden;
+background:linear-gradient(145deg,rgba(255,255,255,.02),transparent);border:1px solid rgba(255,255,255,.05);transition:.4s;cursor:pointer}
+.rank-card:hover{transform:translateY(-6px);border-color:rgba(106,13,173,.15);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.rank-card.selected{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue),0 0 30px rgba(0,191,255,.08)}
+.rank-card .rib{position:absolute;top:10px;right:10px;padding:3px 10px;border-radius:6px;font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;z-index:2;box-shadow:0 0 15px rgba(106,13,173,.15)}
+.rank-card .ri{width:100%;height:80px;object-fit:contain;margin-bottom:8px;transition:.4s;filter:drop-shadow(0 8px 20px rgba(106,13,173,.06))}
+.rank-card:hover .ri{transform:scale(1.06) translateY(-4px)}
+.rank-card .rn{font-size:20px;font-weight:900;letter-spacing:-.3px;color:#d0d0e0;margin-bottom:5px}
+.rank-card .rp{font-size:24px;font-weight:900;color:var(--blue);text-shadow:0 0 20px rgba(0,191,255,.08);margin-bottom:8px}
+.rank-card .rf{list-style:none;text-align:left;margin-bottom:12px}
+.rank-card .rf li{padding:4px 0;font-size:11px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--tx2)}
+.rank-card .rf li::before{content:'◆';color:var(--purple);font-size:9px}
+.rank-card .buy-btn{width:100%;padding:10px;border-radius:10px;font-weight:700;font-size:12px;letter-spacing:.3px;
+border:1px solid rgba(106,13,173,.1);color:var(--blue);cursor:pointer;background:transparent;transition:.3s;font-family:inherit}
+.rank-card .buy-btn:hover{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border-color:transparent;transform:translateY(-2px);box-shadow:0 8px 20px rgba(106,13,173,.1)}
+
+/* CART MODAL */
+.cart-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.cart-overlay.show{display:flex}
+.cart{background:linear-gradient(160deg,#120020,#0a0015);border:1px solid rgba(106,13,173,.12);border-radius:24px;padding:32px;max-width:520px;width:100%;position:relative;animation:cartIn .35s;max-height:90vh;overflow-y:auto}
+@keyframes cartIn{from{transform:scale(.93) translateY(10px);opacity:0}to{transform:scale(1);opacity:1}}
+.cart-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--tx2);font-size:22px;cursor:pointer;transition:.2s}
+.cart-close:hover{color:var(--blue);transform:rotate(90deg)}
+.cart h3{font-size:22px;font-weight:900;margin-bottom:4px;color:#d0d0e0}
+.cart .cart-desc{font-size:12px;color:var(--tx2);margin-bottom:20px}
+.cart .selected-rank{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;
+background:rgba(106,13,173,.06);border:1px solid rgba(106,13,173,.1);margin-bottom:16px}
+.cart .selected-rank .sr-icon{font-size:28px}
+.cart .selected-rank .sr-info{flex:1}
+.cart .selected-rank .sr-info .sr-name{font-size:16px;font-weight:800;color:#d0d0e0}
+.cart .selected-rank .sr-info .sr-price{font-size:14px;color:var(--blue);font-weight:700}
+.cart label{font-size:11px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.cart input,.cart select{width:100%;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:#d0d0e0;font-size:13px;margin-bottom:14px;outline:none;transition:.3s;font-family:inherit}
+.cart input:focus,.cart select:focus{border-color:var(--purple);box-shadow:0 0 15px rgba(106,13,173,.05)}
+.cart .duration{display:flex;gap:8px;margin-bottom:14px}
+.cart .duration label{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;
+background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:.2s;font-size:12px;font-weight:600;color:var(--tx2);text-transform:none;letter-spacing:0}
+.cart .duration input{display:none}
+.cart .duration input:checked+label{background:rgba(106,13,173,.1);border-color:var(--purple);color:var(--tx)}
+.cart .total{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-radius:12px;
+background:rgba(0,191,255,.04);border:1px solid rgba(0,191,255,.08);margin-bottom:18px}
+.cart .total .t-lbl{font-size:12px;color:var(--tx2);font-weight:500}
+.cart .total .t-price{font-size:22px;font-weight:900;color:var(--blue);text-shadow:0 0 20px rgba(0,191,255,.1)}
+
+/* PAYMENT METHODS */
+.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.pay-method{display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:10px;
+background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:.2s}
+.pay-method input{display:none}
+.pay-method:has(input:checked){background:rgba(106,13,173,.08);border-color:var(--purple)}
+.pay-method .pm-icon{font-size:20px}
+.pay-method .pm-info{flex:1}
+.pay-method .pm-info .pm-name{font-size:12px;font-weight:700;color:#d0d0e0}
+.pay-method .pm-info .pm-desc{font-size:9px;color:var(--tx2)}
+
+/* PAYMENT FORM */
+.pay-form{animation:fadeIn .3s}
+.pay-form .pay-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--blue));border:none;color:#fff;font-weight:800;font-size:14px;cursor:pointer;transition:.3s;font-family:inherit;position:relative;overflow:hidden}
+.pay-form .pay-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(106,13,173,.2)}
+.pay-form .pay-btn.loading{pointer-events:none}
+.pay-form .pay-btn.loading::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.pay-form .test-notice{padding:8px;border-radius:8px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.1);font-size:10px;color:var(--gold-dim);text-align:center;margin-top:10px}
+
+/* SUCCESS */
+.success-screen{display:none;text-align:center;padding:20px}
+.success-screen.show{display:block;animation:cartIn .4s}
+.success-screen .diamond{font-size:80px;display:block;margin-bottom:16px;animation:diamondPop .6s ease}
+@keyframes diamondPop{0%{transform:scale(0);opacity:0}50%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+.success-screen h3{font-size:24px;font-weight:900;color:var(--success);margin-bottom:8px}
+.success-screen p{font-size:13px;color:var(--tx2);margin-bottom:6px;line-height:1.6}
+.success-screen .success-ip{display:inline-block;padding:8px 16px;border-radius:10px;background:rgba(67,181,129,.1);border:1px solid rgba(67,181,129,.15);font-size:14px;font-weight:700;color:var(--success);margin-top:12px;cursor:pointer}
+
+/* ===== COMMUNITY ===== */
+.comm-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.comm-card{padding:24px;border-radius:16px;text-align:center;
+background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.04);transition:.3s;cursor:pointer;text-decoration:none;color:inherit;display:block}
+.comm-card:hover{transform:translateY(-4px);border-color:rgba(106,13,173,.1);box-shadow:0 15px 40px rgba(0,0,0,.4)}
+.comm-card .co-ic{font-size:36px;margin-bottom:8px;display:block}
+.comm-card h3{font-size:14px;font-weight:700;margin-bottom:4px;color:#d0d0e0}
+.comm-card p{font-size:10px;color:var(--tx2)}
+.comm-card .co-online{font-size:11px;color:var(--blue);font-weight:700;margin-top:6px}
+
+/* ===== MAP ===== */
+.map-preview{position:relative;border-radius:16px;overflow:hidden;height:240px;
+background:linear-gradient(145deg,rgba(106,13,173,.08),rgba(0,191,255,.04));border:1px solid rgba(106,13,173,.1);
+display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.4s}
+.map-preview:hover{border-color:rgba(106,13,173,.2);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.map-preview .map-icon{font-size:60px;opacity:.3}
+.map-preview .map-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(5,0,8,.3)}
+.map-preview .map-over span{font-size:16px;font-weight:800;color:#d0d0e0;margin-bottom:4px}
+.map-preview .map-over p{font-size:11px;color:var(--tx2)}
+
+/* ===== FOOTER ===== */
+footer{padding:40px 20px 24px;text-align:center;border-top:1px solid rgba(106,13,173,.05);color:#5a5a70;font-size:11px}
+footer a{color:var(--blue);text-decoration:none;font-weight:600}
+footer .f-links{display:flex;gap:12px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+footer .f-links a{padding:6px 14px;border-radius:8px;border:1px solid rgba(106,13,173,.06);font-size:11px;transition:.2s}
+footer .f-links a:hover{background:rgba(106,13,173,.06);border-color:rgba(106,13,173,.12)}
+footer .f-ip{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;
+background:rgba(106,13,173,.04);border:1px solid rgba(106,13,173,.08);cursor:pointer;font-size:13px;font-weight:700;color:var(--tx);transition:.2s;margin-bottom:12px}
+footer .f-ip:hover{border-color:var(--purple)}
+footer .f-ip .cp-f{padding:4px 8px;border-radius:6px;background:linear-gradient(135deg,var(--purple),var(--blue));border:none;color:#fff;font-size:8px;font-weight:700;cursor:pointer;font-family:inherit}
+
+.fi{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
+.fi.show{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="logo" onclick="go('home')"><span>MCubic</span></div>
+<div class="nv-l">
+<a onclick="go('home')" class="act">Главная</a>
+<a onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Магазин</a>
+<a onclick="document.getElementById('modes').scrollIntoView({behavior:'smooth'})">Режимы</a>
+<a onclick="document.getElementById('community').scrollIntoView({behavior:'smooth'})">Сообщество</a>
+</div>
+<div class="nv-s">
+<a href="https://discord.gg/" target="_blank">DC</a>
+<a href="https://vk.com/" target="_blank">VK</a>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+<div class="hero-bg"><img src="banner.jpg" alt=""><div class="v"></div></div>
+<div class="cube-wrap"><div class="cube-3d">
+<div class="cf f1">⛏</div><div class="cf f2">⚔️</div><div class="cf f3">🏰</div><div class="cf f4">💎</div><div class="cf f5">👑</div><div class="cf f6">⚡</div>
+</div></div>
+<div class="hz">
+<div class="badge"><span class="dot"></span> <span id="onlineDisplay">142</span> игрока онлайн</div>
+<div class="big">MCubic</div>
+<div class="sub">— Твоя вселенная в одном сервере —</div>
+<div class="desc">5+ игровых режимов • Тысячи игроков • 99.9% аптайм • &lt;20ms тикрейт</div>
+<div class="online-box"><span class="num" id="onlineCount">0</span><span class="lbl">игроков прямо сейчас</span></div>
+<div class="row">
+<div class="ipx" onclick="copyIP()"><span>mcubic.net</span><span class="cp" id="cpb">Копировать IP</span></div>
+<button class="btn-g" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">🎮 Купить привилегию</button>
+</div>
+</div>
+</section>
+
+<!-- STATS -->
+<div class="s">
+<div class="s-l">Статистика</div>
+<h2 class="s-t fi">Сервер в цифрах</h2>
+<p class="s-p fi">Реальные показатели нашего комьюнити</p>
+<div class="st-g fi">
+<div class="st"><div class="nm"><span class="counter" data-target="12000">0</span>+</div><div class="lb">Игроков</div></div>
+<div class="st"><div class="nm"><span class="counter" data-target="6">0</span></div><div class="lb">Режимов</div></div>
+<div class="st"><div class="nm">99.9%</div><div class="lb">Аптайм</div></div>
+<div class="st"><div class="nm">&lt;20ms</div><div class="lb">Тикрейт</div></div>
+</div>
+</div>
+
+<!-- GAME MODES -->
+<div class="s" id="modes">
+<div class="s-l">Режимы</div>
+<h2 class="s-t fi">Игровые режимы</h2>
+<p class="s-p fi">Выбери то, что тебе по душе</p>
+<div class="modes-g fi">
+<div class="mc-card"><div class="mc-bg"><img src="banner.jpg" alt=""></div><div class="mc-over"><div class="mc-ic">🌲</div><h3>Survival</h3><p>Классический выживание с уникальными плагинами, экономикой и кланами. Строй, добывай, выживай.</p><span class="mc-online">● 42 онлайн</span></div></div>
+<div class="mc-card"><div class="mc-bg"><img src="banner.jpg" alt=""></div><div class="mc-over"><div class="mc-ic">🏝️</div><h3>SkyBlock</h3><p>Начни с одного острова в небе. Развивайся, расширяй территорию и соревнуйся с другими игроками.</p><span class="mc-online">● 28 онлайн</span></div></div>
+<div class="mc-card"><div class="mc-bg"><img src="banner.jpg" alt=""></div><div class="mc-over"><div class="mc-ic">🛏️</div><h3>BedWars</h3><p>Защищай свою кровать и уничтожай чужие. Командная стратегия, PvP и тактика. Побеждает сильнейший.</p><span class="mc-online">● 35 онлайн</span></div></div>
+<div class="mc-card"><div class="mc-bg"><img src="banner.jpg" alt=""></div><div class="mc-over"><div class="mc-ic">🎮</div><h3>Mini-Games</h3><p>Десятки мини-игр: Murder, Hide&Seek, Build Battle, Spleef и многие другие. Никогда не соскучишься.</p><span class="mc-online">● 18 онлайн</span></div></div>
+<div class="mc-card"><div class="mc-bg"><img src="banner.jpg" alt=""></div><div class="mc-over"><div class="mc-ic">☠️</div><h3>Anarchy</h3><p>Никаких правил. Полный хаос. Читы разрешены. Выживает сильнейший. Адская песочница без границ.</p><span class="mc-online">● 15 онлайн</span></div></div>
+</div>
+</div>
+
+<!-- SHOP -->
+<div class="shop" id="shop">
+<div class="shop-inner">
+<div class="s-l" style="color:var(--gold)">💎 Магазин</div>
+<h2 class="s-t fi" style="background:linear-gradient(135deg,var(--gold),var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Приобрести привилегию</h2>
+<p class="s-p fi">Выбери ранг — получи уникальные возможности на сервере</p>
+<div class="ranks-g fi">
+
+<div class="rank-card" data-rank="knight" data-price="199">
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">⚔️</div>
+<div class="rn">Knight</div>
+<div class="rp">199 ₽</div>
+<ul class="rf">
+<li>Цветной ник в чате</li>
+<li>/kit starter</li>
+<li>3 привата</li>
+<li>Без очереди на вход</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Knight',199)">Купить</button>
+</div>
+
+<div class="rank-card" data-rank="hero" data-price="349">
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">🛡️</div>
+<div class="rn">Hero</div>
+<div class="rp">349 ₽</div>
+<ul class="rf">
+<li>Всё из Knight</li>
+<li>/fly (15 мин/день)</li>
+<li>5 приватов</li>
+<li>Донат-кейс в подарок</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Hero',349)">Купить</button>
+</div>
+
+<div class="rank-card" data-rank="duke" data-price="499">
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">🏹</div>
+<div class="rn">Duke</div>
+<div class="rp">499 ₽</div>
+<ul class="rf">
+<li>Всё из Hero</li>
+<li>/fly (30 мин/день)</li>
+<li>7 приватов</li>
+<li>/near + префикс [Duke]</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Duke',499)">Купить</button>
+</div>
+
+<div class="rank-card" data-rank="baron" data-price="699">
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">🏰</div>
+<div class="rn">Baron</div>
+<div class="rp">699 ₽</div>
+<ul class="rf">
+<li>Всё из Duke</li>
+<li>/fly безлимит</li>
+<li>10 приватов</li>
+<li>/workbench + 3 кейса</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Baron',699)">Купить</button>
+</div>
+
+<div class="rank-card selected" data-rank="prince" data-price="999">
+<div class="rib">ХИТ</div>
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">👑</div>
+<div class="rn">Prince</div>
+<div class="rp">999 ₽</div>
+<ul class="rf">
+<li>Всё из Baron</li>
+<li>/craft, /anvil</li>
+<li>12 приватов</li>
+<li>Частицы + 5 кейсов</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Prince',999)">Купить</button>
+</div>
+
+<div class="rank-card" data-rank="king" data-price="1499">
+<div class="rib">ТОП</div>
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">⚡</div>
+<div class="rn">King</div>
+<div class="rp">1 499 ₽</div>
+<ul class="rf">
+<li>Всё из Prince</li>
+<li>/hat, /top</li>
+<li>15 приватов</li>
+<li>Свой цвет + 10 кейсов</li>
+</ul>
+<button class="buy-btn" onclick="openCart('King',1499)">Купить</button>
+</div>
+
+<div class="rank-card" data-rank="emperor" data-price="2499">
+<div class="rib">ЛЕГЕНДА</div>
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">🔥</div>
+<div class="rn">Emperor</div>
+<div class="rp">2 499 ₽</div>
+<ul class="rf">
+<li>Всё из King</li>
+<li>/feed, /heal</li>
+<li>20 приватов</li>
+<li>/god (10 мин) + 20 кейсов</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Emperor',2499)">Купить</button>
+</div>
+
+<div class="rank-card" data-rank="legend" data-price="4999">
+<div class="rib">МИФ</div>
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">💎</div>
+<div class="rn">Legend</div>
+<div class="rp">4 999 ₽</div>
+<ul class="rf">
+<li>Всё из Emperor</li>
+<li>/god безлимит</li>
+<li>30 приватов</li>
+<li>Титул + 50 кейсов</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Legend',4999)">Купить</button>
+</div>
+
+<div class="rank-card" data-rank="overlord" data-price="9999" style="border-color:var(--gold);background:linear-gradient(145deg,rgba(255,215,0,.06),transparent)">
+<div class="rib">МАКСИМУМ</div>
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">🐉</div>
+<div class="rn" style="color:var(--gold)">Overlord</div>
+<div class="rp">9 999 ₽</div>
+<ul class="rf">
+<li>ВСЁ из Legend</li>
+<li>50 приватов</li>
+<li>Отдельная роль Discord</li>
+<li>Личный цвет + 100 кейсов</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Overlord',9999)">Купить</button>
+</div>
+
+</div>
+
+<div class="serv-g fi">
+<div class="rank-card" data-rank="unban" data-price="199">
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">🔓</div>
+<div class="rn">Разбан</div>
+<div class="rp">199 ₽</div>
+<ul class="rf">
+<li>Снятие блокировки аккаунта</li>
+<li>В течение часа после оплаты</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Разбан',199)">Купить</button>
+</div>
+<div class="rank-card" data-rank="unmute" data-price="99">
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">🔇</div>
+<div class="rn">Размут</div>
+<div class="rp">99 ₽</div>
+<ul class="rf">
+<li>Снятие mute в чате</li>
+<li>Больше никаких ограничений</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Размут',99)">Купить</button>
+</div>
+<div class="rank-card" data-rank="case" data-price="50">
+<div class="ri" style="font-size:60px;height:80px;display:flex;align-items:center;justify-content:center">🎁</div>
+<div class="rn">Донат-кейс</div>
+<div class="rp">50 ₽</div>
+<ul class="rf">
+<li>Случайный приз</li>
+<li>Титулы, предметы, ранги</li>
+</ul>
+<button class="buy-btn" onclick="openCart('Донат-кейс',50)">Купить</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="s">
+<div class="s-l">Лидеры</div>
+<h2 class="s-t fi">Топ игроков</h2>
+<p class="s-p fi">Легенды нашего сервера</p>
+<div class="ld fi">
+<div class="ld-row"><div class="pos gold">🥇</div><div class="info"><div class="avatar">👑</div><span class="name">Notch_Pro</span></div><div class="stat">2,450 ⏱</div></div>
+<div class="ld-row"><div class="pos silver">🥈</div><div class="info"><div class="avatar">⚔️</div><span class="name">MegaBuilder</span></div><div class="stat">1,890 ⏱</div></div>
+<div class="ld-row"><div class="pos bronze">🥉</div><div class="info"><div class="avatar">🔥</div><span class="name">CraftMaster</span></div><div class="stat">1,670 ⏱</div></div>
+<div class="ld-row"><div class="pos">4</div><div class="info"><div class="avatar">🎮</div><span class="name">PixelWarrior</span></div><div class="stat">1,340 ⏱</div></div>
+<div class="ld-row"><div class="pos">5</div><div class="info"><div class="avatar">🏹</div><span class="name">DiamondLord</span></div><div class="stat">1,120 ⏱</div></div>
+<div class="ld-row"><div class="pos">6</div><div class="info"><div class="avatar">💎</div><span class="name">NetherKing</span></div><div class="stat">980 ⏱</div></div>
+<div class="ld-row"><div class="pos">7</div><div class="info"><div class="avatar">⚡</div><span class="name">StormBreaker</span></div><div class="stat">840 ⏱</div></div>
+<div class="ld-row"><div class="pos">8</div><div class="info"><div class="avatar">🛡️</div><span class="name">IronGuard</span></div><div class="stat">720 ⏱</div></div>
+</div>
+</div>
+
+<!-- GALLERY -->
+<div class="s">
+<div class="s-l">Галерея</div>
+<h2 class="s-t fi">Скриншоты сервера</h2>
+<p class="s-p fi">Лучшие моменты и постройки игроков</p>
+<div class="gl fi">
+<div class="gl-item"><img src="banner.jpg" alt=""><div class="over"><span>Спавн мира</span></div><span class="like">❤ 24</span></div>
+<div class="gl-item"><img src="banner.jpg" alt=""><div class="over"><span>Торговый центр</span></div><span class="like">❤ 18</span></div>
+<div class="gl-item"><img src="banner.jpg" alt=""><div class="over"><span>PvP-арена</span></div><span class="like">❤ 31</span></div>
+<div class="gl-item"><img src="banner.jpg" alt=""><div class="over"><span>Небесный остров</span></div><span class="like">❤ 27</span></div>
+<div class="gl-item"><img src="banner.jpg" alt=""><div class="over"><span>Замок дракона</span></div><span class="like">❤ 42</span></div>
+</div>
+</div>
+
+<!-- NEWS -->
+<div class="s">
+<div class="s-l">Новости</div>
+<h2 class="s-t fi">Обновления и события</h2>
+<p class="s-p fi">Следи за жизнью сервера</p>
+<div class="news-list fi">
+<div class="news-item"><div class="tag patch">PATCH NOTES</div><h3>Версия 4.2.0 — Новая PvP-арена</h3><p>Полностью переработанная система PvP, новый рейтинг и еженедельные турниры с призовым фондом.</p><span class="time">только что</span></div>
+<div class="news-item"><div class="tag event">ИВЕНТ</div><h3>Летний билд-баттл 2026</h3><p>Призовой фонд 50 000 монет. Тема: «Подводный мир». Участвуй и побеждай!</p><span class="time">2 часа назад</span></div>
+<div class="news-item"><div class="tag give">РОЗЫГРЫШ</div><h3>Ранг Supreme в подарок</h3><p>Разыгрываем ранг Supreme среди 100 игроков. Условия в Discord-канале #giveaway.</p><span class="time">вчера</span></div>
+</div>
+</div>
+
+<!-- MAP -->
+<div class="s">
+<div class="s-l">Карта</div>
+<h2 class="s-t fi">Интерактивная карта мира</h2>
+<p class="s-p fi">Смотри где играют другие игроки прямо сейчас</p>
+<div class="map-preview fi">
+<div class="map-icon">🗺️</div>
+<div class="map-over">
+<span>🌍 Открыть Live Map</span>
+<p>mcubic.net/map — смотри в реальном времени</p>
+</div>
+</div>
+</div>
+
+<!-- COMMUNITY -->
+<div class="s" id="community">
+<div class="s-l">Сообщество</div>
+<h2 class="s-t fi">Присоединяйся к нам</h2>
+<p class="s-p fi">2500+ игроков уже в нашем Discord</p>
+<div class="comm-g fi">
+<a class="comm-card" href="https://discord.gg/" target="_blank"><div class="co-ic">💬</div><h3>Discord</h3><p>Чат, голос, тикеты, розыгрыши</p><span class="co-online">● 2,500+ онлайн</span></a>
+<a class="comm-card" href="https://vk.com/" target="_blank"><div class="co-ic">📱</div><h3>VK</h3><p>Новости, конкурсы, обновления</p></a>
+<a class="comm-card" href="https://t.me/" target="_blank"><div class="co-ic">✈️</div><h3>Telegram</h3><p>Быстрые уведомления</p></a>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+<div class="f-links">
+<a onclick="go('home')">Главная</a>
+<a onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Магазин</a>
+<a onclick="document.getElementById('modes').scrollIntoView({behavior:'smooth'})">Режимы</a>
+<a onclick="document.getElementById('community').scrollIntoView({behavior:'smooth'})">Сообщество</a>
+</div>
+<div class="f-ip" onclick="copyIP()"><span>mcubic.net</span><span class="cp-f" id="cpb2">Копировать</span></div>
+<p style="margin-top:6px;font-size:10px;color:var(--tx2)">Способы оплаты: Карты РФ, СБП, QIWI, USDT</p>
+<p>© 2026 MCubic · Minecraft — товарный знак Mojang AB · Не аффилировано с Mojang</p>
+</footer>
+
+<!-- CART MODAL -->
+<div class="cart-overlay" id="cartModal">
+<div class="cart">
+<button class="cart-close" onclick="closeCart()">✕</button>
+<div id="cartContent">
+<h3 id="cartTitle">Корзина</h3>
+<p class="cart-desc">Оформи покупку привилегии</p>
+
+<div class="selected-rank">
+<div class="sr-icon" id="cartIcon">👑</div>
+<div class="sr-info">
+<div class="sr-name" id="cartRankName">Supreme</div>
+<div class="sr-price" id="cartRankPrice">999 ₽</div>
+</div>
+</div>
+
+<label>Ник в Minecraft</label>
+<input type="text" id="nickInput" placeholder="Введите ваш ник" required>
+
+<label>Срок действия</label>
+<div class="duration">
+<input type="radio" name="duration" id="durForever" value="forever" checked>
+<label for="durForever">✅ Навсегда</label>
+<input type="radio" name="duration" id="dur30" value="30days">
+<label for="dur30">📅 30 дней</label>
+</div>
+
+<div class="total">
+<span class="t-lbl">Итого к оплате</span>
+<span class="t-price" id="totalPrice">999 ₽</span>
+</div>
+
+<label>Способ оплаты</label>
+<div class="pay-methods">
+<div class="pay-method">
+<input type="radio" name="payment" id="payCard" value="card" checked>
+<label for="payCard" style="display:flex;align-items:center;gap:8px;width:100%;cursor:pointer;background:none;border:none;padding:0;margin:0;text-transform:none;letter-spacing:0;font-size:inherit;color:inherit">
+<span class="pm-icon">💳</span>
+<span class="pm-info"><span class="pm-name">Карта</span><span class="pm-desc" style="display:block;font-size:9px;color:var(--tx2)">Visa/MC/MIR</span></span>
+</label>
+</div>
+<div class="pay-method">
+<input type="radio" name="payment" id="paySBP" value="sbp">
+<label for="paySBP" style="display:flex;align-items:center;gap:8px;width:100%;cursor:pointer;background:none;border:none;padding:0;margin:0;text-transform:none;letter-spacing:0;font-size:inherit;color:inherit">
+<span class="pm-icon">📱</span>
+<span class="pm-info"><span class="pm-name">СБП</span><span class="pm-desc" style="display:block;font-size:9px;color:var(--tx2)">По номеру телефона</span></span>
+</label>
+</div>
+</div>
+
+<div id="payFormSection">
+<div class="pay-form" id="payForm">
+<label id="payFieldLabel">Номер карты</label>
+<input type="text" id="payField" placeholder="0000 0000 0000 0000" maxlength="19">
+<label>Ваше имя</label>
+<input type="text" id="nameField" placeholder="Иван Иванов">
+<label>Email</label>
+<input type="email" id="emailField" placeholder="mail@example.com">
+<button class="pay-btn" onclick="processPayment()">💎 Оплатить <span id="payAmount">999 ₽</span></button>
+<div class="test-notice">🔒 Тестовый режим. Реальная оплата не производится</div>
+</div>
+</div>
+
+</div>
+
+<div class="success-screen" id="successScreen">
+<div class="diamond">💎</div>
+<h3>Привилегия активирована!</h3>
+<p>Спасибо за покупку! Твой ранг уже активен на сервере.</p>
+<p style="font-size:12px;color:var(--tx2)">Зайди на сервер или перезапусти игру</p>
+<div class="success-ip" onclick="copyIP()">⛏ mcubic.net</div>
+<button class="btn-g" style="margin-top:16px;padding:10px 24px" onclick="closeCart()">Закрыть</button>
+</div>
+</div>
+</div>
+
+<script>
+// ONLINE COUNTER
+let online=142;
+function updateOnline(){
+const el=document.getElementById('onlineCount');
+const el2=document.getElementById('onlineDisplay');
+if(el||el2){
+online+=Math.round((Math.random()-.5)*3);
+if(online<120)online=120;if(online>200)online=200;
+if(el)el.textContent=online;
+if(el2)el2.textContent=online;
+}
+}
+setInterval(updateOnline,5000);
+updateOnline();
+
+// COUNTERS
+function animateCounters(){
+document.querySelectorAll('.counter').forEach(el=>{
+const target=parseInt(el.dataset.target);
+let c=0;const inc=Math.ceil(target/50);
+const t=setInterval(()=>{c+=inc;if(c>=target){c=target;clearInterval(t)}el.textContent=c},25);
+});
+}
+const co=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){animateCounters();co.disconnect()}})},{threshold:.4});
+document.querySelectorAll('.counter').forEach(el=>co.observe(el));
+
+// SCROLL OBSERVER
+document.querySelectorAll('.fi').forEach(el=>{
+const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')})},{threshold:.08});
+o.observe(el);
+});
+
+// CART
+let currentRank='Prince';
+let currentPrice=999;
+
+function openCart(rank,price){
+currentRank=rank;currentPrice=price;
+document.getElementById('cartRankName').textContent=rank;
+document.getElementById('cartRankPrice').textContent=price+' ₽';
+document.getElementById('totalPrice').textContent=price+' ₽';
+document.getElementById('payAmount').textContent=price+' ₽';
+document.getElementById('cartTitle').textContent='Купить '+rank;
+const icons={'Knight':'⚔️','Hero':'🛡️','Duke':'🏹','Baron':'🏰','Prince':'👑','King':'⚡','Emperor':'🔥','Legend':'💎','Overlord':'🐉','Разбан':'🔓','Размут':'🔇','Донат-кейс':'🎁'};
+document.getElementById('cartIcon').textContent=icons[rank]||'👑';
+document.getElementById('successScreen').classList.remove('show');
+document.getElementById('cartContent').style.display='block';
+document.getElementById('cartModal').classList.add('show');
+}
+
+function closeCart(){
+document.getElementById('cartModal').classList.remove('show');
+document.getElementById('successScreen').classList.remove('show');
+document.getElementById('cartContent').style.display='block';
+}
+
+// DURATION TOGGLE
+document.querySelectorAll('input[name="duration"]').forEach(el=>{
+el.addEventListener('change',function(){
+const price=this.value==='forever'?currentPrice:Math.round(currentPrice*0.4);
+document.getElementById('totalPrice').textContent=price+' ₽';
+document.getElementById('payAmount').textContent=price+' ₽';
+});
+});
+
+// PAYMENT METHOD TOGGLE
+document.querySelectorAll('input[name="payment"]').forEach(el=>{
+el.addEventListener('change',function(){
+const label=document.getElementById('payFieldLabel');
+const field=document.getElementById('payField');
+if(this.value==='card'){
+label.textContent='Номер карты';
+field.placeholder='0000 0000 0000 0000';
+field.maxLength=19;
+field.value='';
+}else{
+label.textContent='Телефон для СБП';
+field.placeholder='+7 (999) 999-99-99';
+field.maxLength=16;
+field.value='';
+}
+});
+});
+
+// PAYMENT PROCESSING
+function processPayment(){
+const btn=document.querySelector('.pay-btn');
+const nick=document.getElementById('nickInput').value.trim();
+const name=document.getElementById('nameField').value.trim();
+const email=document.getElementById('emailField').value.trim();
+const payField=document.getElementById('payField').value.trim();
+
+if(!nick){alert('Введи ник в Minecraft!');return}
+if(!name){alert('Введи своё имя!');return}
+if(!payField){alert('Заполни платёжные данные!');return}
+
+btn.classList.add('loading');
+btn.textContent='⏳ Обработка...';
+
+setTimeout(()=>{
+btn.classList.remove('loading');
+btn.textContent='✅ Оплачено!';
+document.getElementById('cartContent').style.display='none';
+document.getElementById('successScreen').classList.add('show');
+setTimeout(()=>{
+document.querySelector('.pay-btn').innerHTML='💎 Оплатить <span id="payAmount">'+currentPrice+' ₽</span>';
+},100);
+},2000);
+}
+
+// COPY IP
+function copyIP(){
+navigator.clipboard.writeText('mcubic.net');
+const b=document.getElementById('cpb')||document.getElementById('cpb2');
+if(b){
+b.textContent='Скопировано!';
+b.style.background='#43b581';
+setTimeout(()=>{
+b.textContent='Копировать IP';
+b.style.background='linear-gradient(135deg,var(--purple),var(--blue))';
+},2000);
+}
+}
+
+// CLOSE MODAL ON OVERLAY
+document.getElementById('cartModal').addEventListener('click',function(e){
+if(e.target===this)closeCart();
+});
+
+// CARD FORMATTING
+document.getElementById('payField').addEventListener('input',function(){
+if(document.querySelector('input[name="payment"]:checked').value==='card'){
+this.value=this.value.replace(/\D/g,'').replace(/(\d{4})(?=\d)/g,'$1 ');
+}
+});
+</script>
+</body>
+</html>
