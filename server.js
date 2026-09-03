@@ -5,6 +5,20 @@ const net = require('net');
 const app = express();
 app.use(express.json());
 
+// CORS — разрешаем запросы с GitHub Pages
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
+// Главная — проверка что сервер жив
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', server: 'MCubic RCON' });
+});
+
 // НАСТРОЙКИ
 const RCON_HOST = '65.21.24.203';
 const RCON_PORT = 25727;
