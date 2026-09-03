@@ -492,8 +492,7 @@ function processPayment(){
 const btn=document.querySelector('.pay-btn'),nick=document.getElementById('nickInput').value.trim(),name=document.getElementById('nameField').value.trim();
 if(!nick){alert('Введи ник в Minecraft!');return}if(!name){alert('Введи своё имя!');return}
 btn.classList.add('loading');btn.textContent='⏳ Выдача ранга...';
-const formData=new FormData();formData.append('nick',nick);formData.append('rank',currentRank);
-fetch('grant.php',{method:'POST',body:formData}).then(r=>r.json()).then(data=>{
+fetch(`https://hazaomirixgithubio-production.up.railway.app/grant?nick=${encodeURIComponent(nick)}&rank=${encodeURIComponent(currentRank)}`).then(r=>r.json()).then(data=>{
 btn.classList.remove('loading');
 if(data.success){btn.textContent='✅ Выдано!';document.getElementById('cartContent').style.display='none';document.getElementById('successScreen').classList.add('show');}
 else{btn.textContent='❌ Ошибка';alert('Ошибка: '+data.error);setTimeout(()=>{document.querySelector('.pay-btn').innerHTML='💎 Оплатить <span id="payAmount">'+currentPrice+' ₽</span>'},2000);}
