@@ -49,10 +49,13 @@ function sendRcon(cmd) {
   return new Promise((resolve, reject) => {
     const client = new net.Socket();
     let buf = Buffer.alloc(0);
-    const timeout = setTimeout(() => { client.destroy(); reject(new Error('Timeout RCON')); }, 5000);
+    const REQ_ID = Math.floor(Math.random() * 1000) + 1;
+    let authed = false;
+    const timeout = setTimeout(() => { client.destroy(); reject(new Error('Timeout RCON')); }, 8000);
 
     client.connect(RCON_PORT, RCON_HOST, () => {
-      client.write(packet(3, 0, RCON_PASS));
+      const p = makePacket(3, REQ_ID, RCON_PASS);
+      client.write(p);
     });
 
     client.on('data', (data) => {
@@ -62,30 +65,37 @@ function sendRcon(cmd) {
         if (buf.length < 4 + len) break;
         const id = buf.readInt32LE(4);
         const type = buf.readInt32LE(8);
-        let body = buf.slice(12, 4 + len - 2).toString();
+        let body = buf.slice(12, 4 + len).toString('utf8').replace(/\0/g, '').trim();
         buf = buf.slice(4 + len);
-        if (type === 3 && id >= 0) {
-          client.write(packet(2, id, cmd));
-        } else if (type === 2) {
+
+        if (type === 2 && id === REQ_ID) {
           clearTimeout(timeout);
-          client.destroy();
+          client.end();
           resolve(body);
+          return;
+        }
+        if (type === 3 && id === REQ_ID && !authed) {
+          authed = true;
+          const p = makePacket(2, REQ_ID, cmd);
+          client.write(p);
         }
       }
     });
+
     client.on('error', (e) => { clearTimeout(timeout); reject(e); });
     client.on('close', () => clearTimeout(timeout));
   });
 }
 
-function packet(type, id, body) {
-  const b = Buffer.from(body + '\0\0');
-  const len = b.length + 8;
+function makePacket(type, id, body) {
+  const b = Buffer.from(body, 'utf8');
+  const len = 4 + 4 + b.length + 2;
   const buf = Buffer.alloc(4 + len);
   buf.writeInt32LE(len, 0);
   buf.writeInt32LE(id, 4);
   buf.writeInt32LE(type, 8);
   b.copy(buf, 12);
+  buf.writeInt16LE(0, 12 + b.length);
   return buf;
 }
 
