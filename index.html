@@ -43,7 +43,6 @@ nav{position:fixed;top:0;width:100%;z-index:100;display:flex;align-items:center;
 .hero .logo-main{max-width:300px;margin-bottom:10px;filter:drop-shadow(0 0 40px rgba(255,215,0,.25))}
 .hero .big{font-size:clamp(52px,10vw,110px);font-weight:900;line-height:.9;letter-spacing:-2px;margin-bottom:8px;background:linear-gradient(180deg,#fff8e0 0%,var(--gold) 15%,var(--gold-light) 40%,#fff8e0 55%,var(--gold) 80%,#b8860b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 200%;animation:titleShine 4s ease-in-out infinite}
 @keyframes titleShine{0%,100%{background-position:0% 0%;filter:drop-shadow(0 0 20px rgba(255,215,0,.2))}25%{background-position:50% 50%}50%{background-position:100% 100%;filter:drop-shadow(0 0 50px rgba(255,215,0,.5))}75%{background-position:50% 50%}100%{background-position:0% 0%;filter:drop-shadow(0 0 20px rgba(255,215,0,.2))}}
-.hero .sub{font-size:15px;color:#6a6a80;letter-spacing:5px;text-transform:uppercase;margin-bottom:14px;font-weight:500}
 .hero .desc{font-size:15px;color:rgba(200,200,210,.65);max-width:520px;margin:0 auto 28px;line-height:1.8}
 .hero .row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
 .ipx{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(106,13,173,.15);cursor:pointer;transition:.3s;font-weight:700;font-size:15px;color:var(--tx)}
@@ -75,17 +74,17 @@ nav{position:fixed;top:0;width:100%;z-index:100;display:flex;align-items:center;
 .shop .s-t{background:linear-gradient(135deg,var(--gold),var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .ranks-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px}
 .serv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:28px}
-.rank-card{position:relative;padding:26px 18px 20px;text-align:center;border-radius:16px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.02),transparent);border:1px solid rgba(255,255,255,.06);transition:.4s}
+.rank-card{position:relative;padding:0;text-align:center;border-radius:16px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.02),transparent);border:1px solid rgba(255,255,255,.06);transition:.4s;display:flex;flex-direction:column}
 .rank-card:hover{transform:translateY(-6px);border-color:rgba(106,13,173,.2);box-shadow:0 20px 50px rgba(0,0,0,.5)}
 .rank-card .rib{position:absolute;top:10px;right:10px;padding:3px 10px;border-radius:6px;font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:1px;background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;z-index:2}
-.rank-card .ri{width:100%;height:90px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 8px 20px rgba(106,13,173,.08));transition:.4s;image-rendering:auto}
-.rank-card:hover .ri{transform:scale(1.08) translateY(-5px);filter:drop-shadow(0 12px 30px rgba(255,215,0,.15))}
+.rank-card .sale{position:absolute;top:10px;left:10px;padding:3px 8px;border-radius:6px;font-size:7px;font-weight:800;background:rgba(255,68,68,.2);color:#ff6b6b;border:1px solid rgba(255,68,68,.25);z-index:2;letter-spacing:.5px}
+.rank-card .ri{width:100%;height:200px;object-fit:cover;margin:0;display:block;filter:brightness(.8);transition:.4s}
+.rank-card:hover .ri{transform:scale(1.05);filter:brightness(1)}
+.rank-card .card-info{padding:16px 14px 18px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
 .rank-card .rn-emoji{font-size:44px;display:block;margin-bottom:8px}
-.rank-card .rn{font-size:20px;font-weight:900;letter-spacing:-.3px;color:#e8e8f0;margin-bottom:5px}
-.rank-card .rp{font-size:24px;font-weight:900;color:var(--blue);margin-bottom:8px}
-.rank-card .rf{list-style:none;text-align:left;margin-bottom:14px}
-.rank-card .rf li{padding:4px 0;font-size:11px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--tx2)}
-.rank-card .rf li::before{content:'◆';color:var(--purple);font-size:9px}
+.rank-card .rn{font-size:20px;font-weight:900;letter-spacing:-.3px;color:#e8e8f0;margin-bottom:4px}
+.rank-card .rp{font-size:22px;font-weight:900;color:var(--blue);margin-bottom:12px}
+.rank-card .rp .old{font-size:14px;color:var(--tx2);text-decoration:line-through;font-weight:500;margin-right:6px}
 .buy-btn{width:100%;padding:11px;border-radius:10px;font-weight:700;font-size:12px;letter-spacing:.3px;border:1px solid rgba(106,13,173,.15);color:var(--blue);cursor:pointer;background:transparent;transition:.3s;font-family:inherit}
 .buy-btn:hover{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border-color:transparent;transform:translateY(-2px);box-shadow:0 8px 20px rgba(106,13,173,.12)}
 
@@ -164,7 +163,6 @@ footer a{color:var(--blue);text-decoration:none;font-weight:600}
 <div class="hz">
 <img src="logo.png" alt="MCubic" class="logo-main fi">
 <div class="big">MCubic</div>
-<div class="sub">— Твой Minecraft сервер —</div>
 <div class="desc">Привилегии, Anarchy, SkyBlock, Survival и уникальные фишки. Заходи — здесь ты хочешь остаться.</div>
 <div class="row">
 <div class="ipx" onclick="copyIP()"><span>play.MCubic.ru</span><span class="cp" id="cpb">Копировать IP</span></div>
@@ -193,30 +191,30 @@ footer a{color:var(--blue);text-decoration:none;font-weight:600}
 <p class="s-p fi">Выбери ранг — получи уникальные возможности на сервере</p>
 <div class="ranks-g fi">
 
-<div class="rank-card"><img src="knight.jpg" class="ri" alt="Knight"><div class="rn">Knight</div><div class="rp">199 ₽</div><ul class="rf"><li>Цветной ник в чате</li><li>/kit starter</li><li>3 привата</li><li>Без очереди на вход</li></ul><button class="buy-btn" onclick="openCart('Knight',199)">Купить</button></div>
+<div class="rank-card"><span class="sale">−20%</span><img src="knight.jpg" class="ri" alt="Knight"><div class="card-info"><div class="rn">Knight</div><div class="rp"><span class="old">249 ₽</span>199 ₽</div><button class="buy-btn" onclick="openCart('Knight',199)">Купить</button></div></div>
 
-<div class="rank-card"><img src="hero.jpg" class="ri" alt="Hero"><div class="rn">Hero</div><div class="rp">349 ₽</div><ul class="rf"><li>Всё из Knight</li><li>/fly (15 мин/день)</li><li>5 приватов</li><li>Донат-кейс в подарок</li></ul><button class="buy-btn" onclick="openCart('Hero',349)">Купить</button></div>
+<div class="rank-card"><span class="sale">−20%</span><img src="hero.jpg" class="ri" alt="Hero"><div class="card-info"><div class="rn">Hero</div><div class="rp"><span class="old">436 ₽</span>349 ₽</div><button class="buy-btn" onclick="openCart('Hero',349)">Купить</button></div></div>
 
-<div class="rank-card"><img src="duke.jpg" class="ri" alt="Duke"><div class="rn">Duke</div><div class="rp">499 ₽</div><ul class="rf"><li>Всё из Hero</li><li>/fly (30 мин/день)</li><li>7 приватов</li><li>/near + префикс [Duke]</li></ul><button class="buy-btn" onclick="openCart('Duke',499)">Купить</button></div>
+<div class="rank-card"><span class="sale">−20%</span><img src="duke.jpg" class="ri" alt="Duke"><div class="card-info"><div class="rn">Duke</div><div class="rp"><span class="old">624 ₽</span>499 ₽</div><button class="buy-btn" onclick="openCart('Duke',499)">Купить</button></div></div>
 
-<div class="rank-card"><img src="baron.jpg" class="ri" alt="Baron"><div class="rn">Baron</div><div class="rp">699 ₽</div><ul class="rf"><li>Всё из Duke</li><li>/fly безлимит</li><li>10 приватов</li><li>/workbench + 3 кейса</li></ul><button class="buy-btn" onclick="openCart('Baron',699)">Купить</button></div>
+<div class="rank-card"><span class="sale">−20%</span><img src="baron.jpg" class="ri" alt="Baron"><div class="card-info"><div class="rn">Baron</div><div class="rp"><span class="old">874 ₽</span>699 ₽</div><button class="buy-btn" onclick="openCart('Baron',699)">Купить</button></div></div>
 
-<div class="rank-card" style="border-color:var(--gold)"><div class="rib">ХИТ</div><img src="prince.jpg" class="ri" alt="Prince"><div class="rn">Prince</div><div class="rp">999 ₽</div><ul class="rf"><li>Всё из Baron</li><li>/craft, /anvil</li><li>12 приватов</li><li>Частицы + 5 кейсов</li></ul><button class="buy-btn" onclick="openCart('Prince',999)">Купить</button></div>
+<div class="rank-card" style="border-color:var(--gold)"><div class="rib">ХИТ</div><span class="sale">−20%</span><img src="prince.jpg" class="ri" alt="Prince"><div class="card-info"><div class="rn">Prince</div><div class="rp"><span class="old">1 249 ₽</span>999 ₽</div><button class="buy-btn" onclick="openCart('Prince',999)">Купить</button></div></div>
 
-<div class="rank-card"><div class="rib">ТОП</div><img src="king.jpg" class="ri" alt="King"><div class="rn">King</div><div class="rp">1 499 ₽</div><ul class="rf"><li>Всё из Prince</li><li>/hat, /top</li><li>15 приватов</li><li>Свой цвет + 10 кейсов</li></ul><button class="buy-btn" onclick="openCart('King',1499)">Купить</button></div>
+<div class="rank-card"><div class="rib">ТОП</div><span class="sale">−20%</span><img src="king.jpg" class="ri" alt="King"><div class="card-info"><div class="rn">King</div><div class="rp"><span class="old">1 874 ₽</span>1 499 ₽</div><button class="buy-btn" onclick="openCart('King',1499)">Купить</button></div></div>
 
-<div class="rank-card"><div class="rib">ЛЕГЕНДА</div><img src="emperor.jpg" class="ri" alt="Emperor"><div class="rn">Emperor</div><div class="rp">2 499 ₽</div><ul class="rf"><li>Всё из King</li><li>/feed, /heal</li><li>20 приватов</li><li>/god (10 мин) + 20 кейсов</li></ul><button class="buy-btn" onclick="openCart('Emperor',2499)">Купить</button></div>
+<div class="rank-card"><div class="rib">ЛЕГЕНДА</div><span class="sale">−20%</span><img src="emperor.jpg" class="ri" alt="Emperor"><div class="card-info"><div class="rn">Emperor</div><div class="rp"><span class="old">3 124 ₽</span>2 499 ₽</div><button class="buy-btn" onclick="openCart('Emperor',2499)">Купить</button></div></div>
 
-<div class="rank-card"><div class="rib">МИФ</div><img src="legend.jpg" class="ri" alt="Legend"><div class="rn">Legend</div><div class="rp">4 999 ₽</div><ul class="rf"><li>Всё из Emperor</li><li>/god безлимит</li><li>30 приватов</li><li>Титул + 50 кейсов</li></ul><button class="buy-btn" onclick="openCart('Legend',4999)">Купить</button></div>
+<div class="rank-card"><div class="rib">МИФ</div><span class="sale">−20%</span><img src="legend.jpg" class="ri" alt="Legend"><div class="card-info"><div class="rn">Legend</div><div class="rp"><span class="old">6 249 ₽</span>4 999 ₽</div><button class="buy-btn" onclick="openCart('Legend',4999)">Купить</button></div></div>
 
-<div class="rank-card" style="border-color:var(--gold);background:linear-gradient(145deg,rgba(255,215,0,.06),transparent)"><div class="rib">МАКСИМУМ</div><img src="overlord.jpg" class="ri" alt="Overlord"><div class="rn" style="color:var(--gold)">Overlord</div><div class="rp">9 999 ₽</div><ul class="rf"><li>ВСЁ из Legend</li><li>50 приватов</li><li>Отдельная роль Discord</li><li>Личный цвет + 100 кейсов</li></ul><button class="buy-btn" onclick="openCart('Overlord',9999)">Купить</button></div>
+<div class="rank-card" style="border-color:var(--gold);background:linear-gradient(145deg,rgba(255,215,0,.06),transparent)"><div class="rib">МАКСИМУМ</div><span class="sale">−20%</span><img src="overlord.jpg" class="ri" alt="Overlord"><div class="card-info"><div class="rn" style="color:var(--gold)">Overlord</div><div class="rp"><span class="old">12 499 ₽</span>9 999 ₽</div><button class="buy-btn" onclick="openCart('Overlord',9999)">Купить</button></div></div>
 
 </div>
 
 <div class="serv-g fi">
-<div class="rank-card"><span class="rn-emoji">🔓</span><div class="rn">Разбан</div><div class="rp">199 ₽</div><ul class="rf"><li>Снятие блокировки аккаунта</li><li>В течение часа после оплаты</li></ul><button class="buy-btn" onclick="openCart('Разбан',199)">Купить</button></div>
-<div class="rank-card"><span class="rn-emoji">🔇</span><div class="rn">Размут</div><div class="rp">99 ₽</div><ul class="rf"><li>Снятие mute в чате</li><li>Больше никаких ограничений</li></ul><button class="buy-btn" onclick="openCart('Размут',99)">Купить</button></div>
-<div class="rank-card"><span class="rn-emoji">🎁</span><div class="rn">Донат-кейс</div><div class="rp">50 ₽</div><ul class="rf"><li>Случайный приз</li><li>Титулы, предметы, ранги</li></ul><button class="buy-btn" onclick="openCart('Донат-кейс',50)">Купить</button></div>
+<div class="rank-card"><span class="sale">−20%</span><img src="unban.jpg" class="ri" alt="Разбан" style="height:200px;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="rn-emoji" style="display:none">🔓</span><div class="card-info"><div class="rn">Разбан</div><div class="rp"><span class="old">249 ₽</span>199 ₽</div><button class="buy-btn" onclick="openCart('Разбан',199)">Купить</button></div></div>
+<div class="rank-card"><span class="sale">−20%</span><img src="unmute.jpg" class="ri" alt="Размут" style="height:200px;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="rn-emoji" style="display:none">🔇</span><div class="card-info"><div class="rn">Размут</div><div class="rp"><span class="old">124 ₽</span>99 ₽</div><button class="buy-btn" onclick="openCart('Размут',99)">Купить</button></div></div>
+<div class="rank-card"><span class="sale">−20%</span><img src="case.jpg" class="ri" alt="Кейс" style="height:200px;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="rn-emoji" style="display:none">🎁</span><div class="card-info"><div class="rn">Донат-кейс</div><div class="rp"><span class="old">63 ₽</span>50 ₽</div><button class="buy-btn" onclick="openCart('Донат-кейс',50)">Купить</button></div></div>
 </div>
 </div>
 </div>
