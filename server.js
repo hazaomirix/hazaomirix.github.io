@@ -1,5 +1,4 @@
 const express = require('express');
-const crypto = require('crypto');
 const { Rcon } = require('rcon-client');
 
 const app = express();
@@ -18,11 +17,11 @@ const RCON_HOST = process.env.RCON_HOST || '65.21.24.203';
 const RCON_PORT = parseInt(process.env.RCON_PORT || '25727');
 const RCON_PASS = process.env.RCON_PASS || 'gCVELd59Gz';
 
-const CRYSTAL_MERCHANT = process.env.CRYSTAL_MERCHANT || '141735';
-const CRYSTAL_SECRET = process.env.CRYSTAL_SECRET || '0e300c433cdccd75fdaf8ad330767eddfbea5b43';
-const CRYSTAL_SALT = process.env.CRYSTAL_SALT || '25e67b70b62eea85a2cb6b472acf2c87fc12dff0';
-const ADMIN_KEY = process.env.ADMIN_KEY || 'mcubic2026';
+const CRYSTAL_LOGIN = 'migoy34';
+const CRYSTAL_SECRET = '0e300c433cdccd75fdaf8ad330767eddfbea5b43';
+const CRYSTAL_SALT = '25e67b70b62eea85a2cb6b472acf2c87fc12dff0';
 const SITE_URL = 'https://hazaomirix.github.io';
+const API_URL = 'https://api.crystalpay.io/v3';
 
 const RANKS = {
   'Knight':     { amount: 199,   cmds: ['lp user %nick% parent set knight', 'say Игрок %nick% получил ранг Knight!'] },
@@ -39,8 +38,6 @@ const RANKS = {
   'Донат-кейс': { amount: 50,    cmds: ['give %nick% chest 1', 'say Игрок %nick% получил донат-кейс!'] },
 };
 
-const invoices = {};
-
 async function sendRcon(cmd) {
   const client = new Rcon({ host: RCON_HOST, port: RCON_PORT, password: RCON_PASS, timeout: 8000 });
   await client.connect();
@@ -50,56 +47,78 @@ async function sendRcon(cmd) {
 }
 
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', server: 'MCubic', merchant_set: !!CRYSTAL_MERCHANT });
+  res.json({ status: 'ok', server: 'MCubic' });
 });
 
-app.get('/grant', async (req, res) => {
+app.get('/create-payment', async (req, res) => {
   const nick = req.query.nick;
   const rank = req.query.rank;
-  const key = req.query.admin;
-  if (key !== ADMIN_KEY) return res.status(403).json({ success: false, error: 'forbidden' });
-  if (!nick || !rank || !RANKS[rank]) return res.status(400).json({ success: false, error: 'bad params' });
+  if (!nick || !rank || !RANKS[rank]) {
+    return res.status(400).json({ success: false, error: 'Укажи ник и ранг' });
+  }
+  const amount = RANKS[rank].amount;
+  const extra = `${nick}:${rank}`;
+
   try {
-    const results = [];
-    for (const cmd of RANKS[rank].cmds) results.push(await sendRcon(cmd.replace(/%nick%/g, nick)));
-    res.json({ success: true, message: `${rank} выдан ${nick}`, results });
+    const r = await fetch(`${API_URL}/invoice/create/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        auth_login: CRYSTAL_LOGIN,
+        auth_secret: CRYSTAL_SECRET,
+        amount: String(amount),
+        type: 'purchase',
+        lifetime: 30,
+        description: `MCubic ${rank}`,
+        extra: extra,
+        redirect_url: SITE_URL,
+        callback_url: 'https://hazaomirixgithubio-production.up.railway.app/crystal-webhook'
+      })
+    });
+    const data = await r.json();
+    if (data.error || !data.url) {
+      throw new Error(JSON.stringify(data.errors || data));
+    }
+    res.json({ success: true, url: data.url, id: data.id });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
 });
 
-app.get('/create-payment', (req, res) => {
-  const nick = req.query.nick;
-  const rank = req.query.rank;
-  if (!nick || !rank || !RANKS[rank]) return res.status(400).json({ success: false, error: 'Укажи ник и ранг' });
-  const amount = RANKS[rank].amount;
-  const url = `https://crystalpay.io/merchant/pay?merchant=${CRYSTAL_MERCHANT}&amount=${amount}&currency=rub&description=MCubic+${encodeURIComponent(rank)}&custom_nick=${encodeURIComponent(nick)}&custom_rank=${encodeURIComponent(rank)}&redirect_url=${encodeURIComponent(SITE_URL)}`;
-  res.json({ success: true, url: url });
-});
-
 app.post('/crystal-webhook', async (req, res) => {
   const body = req.body;
   console.log('WEBHOOK:', JSON.stringify(body));
-  const id = body.id || body.invoice_id;
-  if (body.status !== 'success') return res.json({ status: 'error', message: 'not success' });
 
-  let nick = body.custom && (body.custom.nick || body.custom_rank);
-  let rank = body.custom && (body.custom.rank || body.custom_rank);
-  if ((!nick || !rank) && invoices[id]) {
-    nick = invoices[id].nick;
-    rank = invoices[id].rank;
+  if (!body || body.status !== 'paid') {
+    return res.json({ error: 'not paid' });
   }
+
+  const extra = body.extra || '';
+  const parts = extra.split(':');
+  if (parts.length !== 2) {
+    return res.json({ error: 'bad extra' });
+  }
+  const nick = parts[0];
+  const rank = parts[1];
+
   if (!nick || !rank || !RANKS[rank]) {
-    return res.json({ status: 'error', message: 'no nick/rank' });
+    return res.json({ error: 'no rank' });
   }
-  const cmds = [];
-  for (const c of RANKS[rank].cmds) cmds.push(await sendRcon(c.replace(/%nick%/g, nick)));
-  console.log('GRANTED', rank, nick);
-  res.json({ status: 'success' });
+
+  try {
+    const results = [];
+    for (const cmd of RANKS[rank].cmds) {
+      results.push(await sendRcon(cmd.replace(/%nick%/g, nick)));
+    }
+    console.log(`GRANTED ${rank} to ${nick}`);
+    res.json({ status: 'success' });
+  } catch (e) {
+    console.error('RCON error:', e.message);
+    res.json({ status: 'error', message: e.message });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log('MCubic RCON+Pay server running on port ' + PORT);
-  console.log('Merchant set: ' + !!CRYSTAL_MERCHANT);
+  console.log('MCubic CrystalPay server running on port ' + PORT);
 });
