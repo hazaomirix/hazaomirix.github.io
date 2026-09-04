@@ -4,8 +4,8 @@ const { Rcon } = require('rcon-client');
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// CORS — разрешаем запросы с GitHub Pages
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -14,128 +14,124 @@ app.use((req, res, next) => {
   next();
 });
 
-// Главная — проверка что сервер жив
-app.get('/', (req, res) => {
-  res.json({ status: 'ok', server: 'MCubic RCON' });
-});
+const RCON_HOST = process.env.RCON_HOST || '65.21.24.203';
+const RCON_PORT = parseInt(process.env.RCON_PORT || '25727');
+const RCON_PASS = process.env.RCON_PASS || 'gCVELd59Gz';
 
-// НАСТРОЙКИ
-const RCON_HOST = '65.21.24.203';
-const RCON_PORT = 25727;
-const RCON_PASS = 'gCVELd59Gz';
+const CRYSTAL_MERCHANT = process.env.CRYSTAL_MERCHANT || 'migoy';
+const CRYSTAL_SECRET = process.env.CRYSTAL_SECRET || '5ea537c87aff642426ba0b75180c9a72e4a27201';
+const CRYSTAL_SALT = process.env.CRYSTAL_SALT || '6dc74bfe11eb2c45808df945e64fded0a5f2dc16';
+const ADMIN_KEY = process.env.ADMIN_KEY || 'mcubic2026';
+const SITE_URL = 'https://hazaomirix.github.io';
+const API = 'https://api.crystalpay.io/v3';
 
-// ТВОЙ CRYSTALPAY SALT (получить в кабинете CrystalPay → Настройки → Соль)
-const CRYSTAL_SALT = '7b18f1bc37a495c75354eb73e30c9df0fa6c82ff';
-
-// ТВОЙ CRYSTALPAY MERCHANT ID
-const MERCHANT_ID = ''; // напиши мне его
-
-const COMMANDS = {
-  'Knight': ['lp user %nick% parent set knight', 'say Игрок %nick% получил ранг Knight!'],
-  'Hero': ['lp user %nick% parent set hero', 'say Игрок %nick% получил ранг Hero!'],
-  'Duke': ['lp user %nick% parent set duke', 'say Игрок %nick% получил ранг Duke!'],
-  'Baron': ['lp user %nick% parent set baron', 'say Игрок %nick% получил ранг Baron!'],
-  'Prince': ['lp user %nick% parent set prince', 'say Игрок %nick% получил ранг Prince!'],
-  'King': ['lp user %nick% parent set king', 'say Игрок %nick% получил ранг King!'],
-  'Emperor': ['lp user %nick% parent set emperor', 'say Игрок %nick% получил ранг Emperor!'],
-  'Legend': ['lp user %nick% parent set legend', 'say Игрок %nick% получил ранг Legend!'],
-  'Overlord': ['lp user %nick% parent set overlord', 'say Игрок %nick% получил ранг Overlord!'],
-  'Разбан': ['unban %nick%', 'say Игрок %nick% разбанен!'],
-  'Размут': ['unmute %nick%', 'say Игрок %nick% размучен!'],
-  'Донат-кейс': ['give %nick% chest 1', 'say Игрок %nick% получил донат-кейс!'],
+const RANKS = {
+  'Knight':     { amount: 199,   cmds: ['lp user %nick% parent set knight', 'say Игрок %nick% получил ранг Knight!'] },
+  'Hero':       { amount: 349,   cmds: ['lp user %nick% parent set hero', 'say Игрок %nick% получил ранг Hero!'] },
+  'Duke':       { amount: 499,   cmds: ['lp user %nick% parent set duke', 'say Игрок %nick% получил ранг Duke!'] },
+  'Baron':      { amount: 699,   cmds: ['lp user %nick% parent set baron', 'say Игрок %nick% получил ранг Baron!'] },
+  'Prince':     { amount: 999,   cmds: ['lp user %nick% parent set prince', 'say Игрок %nick% получил ранг Prince!'] },
+  'King':       { amount: 1499,  cmds: ['lp user %nick% parent set king', 'say Игрок %nick% получил ранг King!'] },
+  'Emperor':    { amount: 2499,  cmds: ['lp user %nick% parent set emperor', 'say Игрок %nick% получил ранг Emperor!'] },
+  'Legend':     { amount: 4999,  cmds: ['lp user %nick% parent set legend', 'say Игрок %nick% получил ранг Legend!'] },
+  'Overlord':   { amount: 9999,  cmds: ['lp user %nick% parent set overlord', 'say Игрок %nick% получил ранг Overlord!'] },
+  'Разбан':     { amount: 199,   cmds: ['unban %nick%', 'say Игрок %nick% разбанен!'] },
+  'Размут':     { amount: 99,    cmds: ['unmute %nick%', 'say Игрок %nick% размучен!'] },
+  'Донат-кейс': { amount: 50,    cmds: ['give %nick% chest 1', 'say Игрок %nick% получил донат-кейс!'] },
 };
 
+const invoices = {};
+
 async function sendRcon(cmd) {
-  const client = new Rcon({ host: RCON_HOST, port: RCON_PORT, password: RCON_PASS });
+  const client = new Rcon({ host: RCON_HOST, port: RCON_PORT, password: RCON_PASS, timeout: 8000 });
   await client.connect();
   const result = await client.send(cmd);
   await client.end();
   return result;
 }
 
-// Проверка подписи CrystalPay
-function verifyCrystal(data, signature) {
-  const str = Object.keys(data).sort().map(k => data[k]).join('|') + CRYSTAL_SALT;
-  const hash = crypto.createHash('sha256').update(str).digest('hex');
-  return hash === signature;
+async function crystalToken() {
+  const r = await fetch(`${API}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ merchant: CRYSTAL_MERCHANT, secret: CRYSTAL_SECRET, salt: CRYSTAL_SALT })
+  });
+  const data = await r.json();
+  if (!data.token) throw new Error('CrystalPay login failed: ' + JSON.stringify(data));
+  return data.token;
 }
 
-// WEBHOOK от CrystalPay
-app.post('/crystal-webhook', (req, res) => {
-  const { signature, ...data } = req.body;
-  
-  // if (!verifyCrystal(data, signature)) {
-  //   return res.status(403).json({ error: 'bad sign' });
-  // }
-
-  const nick = req.body.custom_nick; // передаём ник в custom поле
-  const product = req.body.product_name;
-
-  if (!nick || !product) {
-    return res.json({ error: 'no nick/product', status: 'error' });
-  }
-
-  if (!COMMANDS[product]) {
-    return res.json({ error: 'unknown product', status: 'error' });
-  }
-
-  const commands = COMMANDS[product].map(c => c.replace(/%nick%/g, nick));
-
-  (async () => {
-    try {
-      for (const cmd of commands) {
-        await sendRcon(cmd);
-      }
-      console.log(`✅ ${product} выдан ${nick}`);
-      res.json({ status: 'success' });
-    } catch (e) {
-      console.error('RCON error:', e.message);
-      res.json({ status: 'error', message: e.message });
-    }
-  })();
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', server: 'MCubic', merchant_set: !!CRYSTAL_MERCHANT });
 });
 
-// Тестовая выдача (с сайта)
-app.get('/grant', (req, res) => {
+app.get('/grant', async (req, res) => {
   const nick = req.query.nick;
   const rank = req.query.rank;
-  
-  if (!nick || !rank || !COMMANDS[rank]) {
-    return res.status(400).json({ success: false, error: 'bad params' });
+  const key = req.query.admin;
+  if (key !== ADMIN_KEY) return res.status(403).json({ success: false, error: 'forbidden' });
+  if (!nick || !rank || !RANKS[rank]) return res.status(400).json({ success: false, error: 'bad params' });
+  try {
+    const results = [];
+    for (const cmd of RANKS[rank].cmds) results.push(await sendRcon(cmd.replace(/%nick%/g, nick)));
+    res.json({ success: true, message: `${rank} выдан ${nick}`, results });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
   }
-
-  const commands = COMMANDS[rank].map(c => c.replace(/%nick%/g, nick));
-
-  (async () => {
-    try {
-      const results = [];
-      for (const cmd of commands) {
-        results.push(await sendRcon(cmd));
-      }
-      res.json({ success: true, message: `${rank} выдан ${nick}`, results });
-    } catch (e) {
-      res.status(500).json({ success: false, error: e.message });
-    }
-  })();
 });
 
-// GET ссылки на оплату
-app.get('/pay', (req, res) => {
+app.get('/create-payment', async (req, res) => {
   const nick = req.query.nick;
   const rank = req.query.rank;
-  const amount = req.query.amount;
-
-  if (!nick || !rank || !amount) {
-    return res.status(400).json({ error: 'Укажи ник, ранг и сумму' });
+  if (!nick || !rank || !RANKS[rank]) return res.status(400).json({ success: false, error: 'Укажи ник и ранг' });
+  const amount = String(RANKS[rank].amount);
+  try {
+    const token = await crystalToken();
+    const r = await fetch(`${API}/invoice/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({
+        amount: amount,
+        type: 'purchase',
+        lifetime: 300,
+        description: 'MCubic ' + rank,
+        redirect_url: SITE_URL + '?payment=result',
+        callback_url: 'https://hazaomirixgithubio-production.up.railway.app/crystal-webhook',
+        custom: { nick: nick, rank: rank }
+      })
+    });
+    const data = await r.json();
+    if (!data.url) throw new Error('Invoice create failed: ' + JSON.stringify(data));
+    invoices[data.id] = { nick, rank };
+    res.json({ success: true, url: data.url, invoice: data.id });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
   }
+});
 
-  // Редирект на CrystalPay
-  const url = `https://crystalpay.io/merchant/pay?merchant=${MERCHANT_ID}&amount=${amount}&currency=rub&custom_nick=${encodeURIComponent(nick)}&custom_rank=${encodeURIComponent(rank)}&description=MCubic+${encodeURIComponent(rank)}`;
-  res.redirect(url);
+app.post('/crystal-webhook', async (req, res) => {
+  const body = req.body;
+  console.log('WEBHOOK:', JSON.stringify(body));
+  const id = body.id || body.invoice_id;
+  if (body.status !== 'success') return res.json({ status: 'error', message: 'not success' });
+
+  let nick = body.custom && (body.custom.nick || body.custom_rank);
+  let rank = body.custom && (body.custom.rank || body.custom_rank);
+  if ((!nick || !rank) && invoices[id]) {
+    nick = invoices[id].nick;
+    rank = invoices[id].rank;
+  }
+  if (!nick || !rank || !RANKS[rank]) {
+    return res.json({ status: 'error', message: 'no nick/rank' });
+  }
+  const cmds = [];
+  for (const c of RANKS[rank].cmds) cmds.push(await sendRcon(c.replace(/%nick%/g, nick)));
+  console.log('GRANTED', rank, nick);
+  res.json({ status: 'success' });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`MCubic RCON Server running on port ${PORT}`);
-  console.log(`RCON: ${RCON_HOST}:${RCON_PORT}`);
+  console.log('MCubic RCON+Pay server running on port ' + PORT);
+  console.log('Merchant set: ' + !!CRYSTAL_MERCHANT);
 });

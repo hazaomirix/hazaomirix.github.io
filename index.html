@@ -380,14 +380,13 @@ if(!nick){alert('Введи ник в Minecraft!');return}
 if(!name){alert('Введи своё имя!');return}
 const btn=document.getElementById('payBtn');
 btn.classList.add('loading');
-btn.innerHTML='⏳ Выдача ранга...';
-fetch('https://hazaomirixgithubio-production.up.railway.app/grant?nick='+encodeURIComponent(nick)+'&rank='+encodeURIComponent(currentRank))
+btn.innerHTML='⏳ Создание оплаты...';
+fetch('https://hazaomirixgithubio-production.up.railway.app/create-payment?nick='+encodeURIComponent(nick)+'&rank='+encodeURIComponent(currentRank))
 .then(r=>r.json())
 .then(data=>{
 if(data.success){
-btn.innerHTML='✅ Выдано!';
-document.getElementById('cartContent').style.display='none';
-document.getElementById('successScreen').classList.add('show');
+btn.classList.remove('loading');
+window.location.href=data.url;
 }else{
 btn.classList.remove('loading');
 btn.innerHTML='❌ Ошибка';
@@ -398,7 +397,7 @@ resetButton();
 .catch(()=>{
 btn.classList.remove('loading');
 btn.innerHTML='❌ Ошибка';
-alert('Не удалось подключиться к серверу');
+alert('Не удалось создать оплату');
 resetButton();
 });
 }
