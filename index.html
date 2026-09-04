@@ -141,6 +141,19 @@ footer a{color:var(--blue);text-decoration:none;font-weight:600}
 
 .fi{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
 .fi.show{opacity:1;transform:none}
+
+/* ===== INFO MODAL ===== */
+.info-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.info-overlay.show{display:flex}
+.info-modal{background:linear-gradient(160deg,#120020,#0a0015);border:1px solid rgba(106,13,173,.15);border-radius:24px;padding:32px;max-width:640px;width:100%;position:relative;animation:cartIn .35s;max-height:85vh;overflow-y:auto}
+.info-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--tx2);font-size:22px;cursor:pointer;transition:.2s}
+.info-close:hover{color:var(--gold);transform:rotate(90deg)}
+.info-modal h2{font-size:18px;font-weight:900;margin-bottom:16px;color:var(--gold);letter-spacing:-.3px}
+.info-modal h3{font-size:14px;font-weight:700;margin-top:16px;margin-bottom:6px;color:var(--blue)}
+.info-modal p{font-size:12px;color:var(--tx2);line-height:1.7;margin-bottom:8px}
+.info-modal ul{list-style:none;margin-bottom:8px}
+.info-modal ul li{padding:4px 0;font-size:11px;color:var(--tx2);display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+.info-modal ul li::before{content:'▸';color:var(--purple);flex-shrink:0}
 </style>
 </head>
 <body>
@@ -238,10 +251,24 @@ footer a{color:var(--blue);text-decoration:none;font-weight:600}
 <a onclick="smooth('modes')">Режимы</a>
 <a onclick="smooth('news')">Новости</a>
 <a href="https://vk.com/mcubic" target="_blank">VK</a>
+<a onclick="openModalInfo('rules')">Правила</a>
+<a onclick="openModalInfo('privacy')">Политика конфиденциальности</a>
 </div>
 <div class="f-ip" onclick="copyIP()"><span>play.MCubic.ru</span><span class="cp-f" id="cpb2">Копировать</span></div>
-<p>© 2026 MCubic · Minecraft — товарный знак Mojang AB · Не аффилировано с Mojang</p>
+<p>© 2026 MCubic · Не аффилировано с Mojang AB</p>
+<p style="margin-top:8px;font-size:9px;color:#4a4a5a">Вся информация на сайте носит ознакомительный характер. Администрация не несёт ответственности за использование материалов сайта. Все права на игровые материалы принадлежат их правообладателям.</p>
 </footer>
+
+<!-- INFO MODAL -->
+<div class="info-overlay" id="infoModal">
+<div class="info-modal">
+<button class="info-close" onclick="closeInfoModal()">✕</button>
+<div id="infoContent">
+<h2 id="infoTitle">Правила</h2>
+<div id="infoBody"></div>
+</div>
+</div>
+</div>
 
 <!-- CART -->
 <div class="cart-overlay" id="cartModal">
@@ -307,6 +334,44 @@ btn.innerHTML='💎 Выдать привилегию';
 btn.classList.remove('loading');
 btn.disabled=false;
 }
+
+const INFO_CONTENT={
+rules:{
+title:'Правила сервера MCubic',
+body:`<h3>🎮 Общие правила</h3>
+<ul><li>Запрещено использование читов, X-Ray и программ с преимуществом</li><li>Запрещён гриферство и воровство чужих вещей</li><li>Запрещены оскорбления игроков и администрации</li><li>Запрещена реклама сторонних серверов</li></ul>
+<h3>💬 Чат и общение</h3>
+<ul><li>Запрещены флуд, спам и нецензурная лексика</li><li>Запрещена публикация личных данных других игроков</li><li>Уважай собеседников в чате</li></ul>
+<h3>⚖️ Наказания</h3>
+<ul><li>За нарушение правил — предупреждение, мут или бан</li><li>Использование читов — перманентный бан</li><li>Обход бана — автоматическое продление наказания</li><li>Решение администрации является окончательным</li></ul>
+<h3>💎 Покупки</h3>
+<ul><li>Покупка привилегии — добровольная поддержка сервера</li><li>Ранг выдаётся после оплаты на указанный ник</li><li>Возврат средств возможен в течение 24 часов, если ранг не был использован</li></ul>`},
+privacy:{
+title:'Политика конфиденциальности',
+body:`<h3>🔒 Какие данные мы собираем</h3>
+<ul><li>Ник в Minecraft — для выдачи приобретённых привилегий</li><li>Имя — для идентификации при обращении в поддержку</li><li>Платёжные данные обрабатываются платёжным сервисом и нам не передаются</li></ul>
+<h3>📦 Как мы используем данные</h3>
+<ul><li>Только для выполнения покупки и выдачи привилегий</li><li>Для связи с вами по вопросам вашего заказа</li><li>Мы не передаём данные третьим лицам, кроме платёжного сервиса</li></ul>
+<h3>🗑️ Хранение и удаление</h3>
+<ul><li>Данные хранятся только пока существует заказ</li><li>Вы можете запросить удаление данных — напишите нам через VK</li><li>Мы не используем cookies для отслеживания</li></ul>
+<h3>⚠️ Ответственность</h3>
+<p>Сайт не является официальным продуктом Mojang AB и не аффилирован с ней. Minecraft — торговая марка Mojang AB. Все материалы принадлежат их правообладателям.</p>`}
+};
+
+function openModalInfo(type){
+const info=INFO_CONTENT[type]||INFO_CONTENT.rules;
+document.getElementById('infoTitle').textContent=info.title;
+document.getElementById('infoBody').innerHTML=info.body;
+document.getElementById('infoModal').classList.add('show');
+}
+
+function closeInfoModal(){
+document.getElementById('infoModal').classList.remove('show');
+}
+
+document.getElementById('infoModal').addEventListener('click',function(e){
+if(e.target===this)closeInfoModal();
+});
 
 function processPayment(){
 const nick=document.getElementById('nickInput').value.trim();
