@@ -23,7 +23,6 @@ const CRYSTAL_SECRET = process.env.CRYSTAL_SECRET || '5ea537c87aff642426ba0b7518
 const CRYSTAL_SALT = process.env.CRYSTAL_SALT || '6dc74bfe11eb2c45808df945e64fded0a5f2dc16';
 const ADMIN_KEY = process.env.ADMIN_KEY || 'mcubic2026';
 const SITE_URL = 'https://hazaomirix.github.io';
-const API = 'https://api.crystalpay.io/v3';
 
 const RANKS = {
   'Knight':     { amount: 199,   cmds: ['lp user %nick% parent set knight', 'say Игрок %nick% получил ранг Knight!'] },
@@ -50,17 +49,6 @@ async function sendRcon(cmd) {
   return result;
 }
 
-async function crystalToken() {
-  const r = await fetch(`${API}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ merchant: CRYSTAL_MERCHANT, secret: CRYSTAL_SECRET, salt: CRYSTAL_SALT })
-  });
-  const data = await r.json();
-  if (!data.token) throw new Error('CrystalPay login failed: ' + JSON.stringify(data));
-  return data.token;
-}
-
 app.get('/', (req, res) => {
   res.json({ status: 'ok', server: 'MCubic', merchant_set: !!CRYSTAL_MERCHANT });
 });
@@ -80,33 +68,13 @@ app.get('/grant', async (req, res) => {
   }
 });
 
-app.get('/create-payment', async (req, res) => {
+app.get('/create-payment', (req, res) => {
   const nick = req.query.nick;
   const rank = req.query.rank;
   if (!nick || !rank || !RANKS[rank]) return res.status(400).json({ success: false, error: 'Укажи ник и ранг' });
-  const amount = String(RANKS[rank].amount);
-  try {
-    const token = await crystalToken();
-    const r = await fetch(`${API}/invoice/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({
-        amount: amount,
-        type: 'purchase',
-        lifetime: 300,
-        description: 'MCubic ' + rank,
-        redirect_url: SITE_URL + '?payment=result',
-        callback_url: 'https://hazaomirixgithubio-production.up.railway.app/crystal-webhook',
-        custom: { nick: nick, rank: rank }
-      })
-    });
-    const data = await r.json();
-    if (!data.url) throw new Error('Invoice create failed: ' + JSON.stringify(data));
-    invoices[data.id] = { nick, rank };
-    res.json({ success: true, url: data.url, invoice: data.id });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
+  const amount = RANKS[rank].amount;
+  const url = `https://crystalpay.io/merchant/pay?merchant=${CRYSTAL_MERCHANT}&amount=${amount}&currency=rub&description=MCubic+${encodeURIComponent(rank)}&custom_nick=${encodeURIComponent(nick)}&custom_rank=${encodeURIComponent(rank)}&redirect_url=${encodeURIComponent(SITE_URL)}`;
+  res.json({ success: true, url: url });
 });
 
 app.post('/crystal-webhook', async (req, res) => {
