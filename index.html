@@ -25,14 +25,13 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--tx);ov
 
 /* ===== NAV ===== */
 nav{position:fixed;top:0;width:100%;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(5,0,8,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(106,13,173,.1)}
-.logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;flex:0 0 auto}
 .logo img{height:30px;border-radius:4px}
 .logo span{font-weight:900;font-size:20px;background:linear-gradient(135deg,var(--gold),var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px}
-.nv-l{display:flex;gap:2px;align-items:center}
-.nv-l a{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;color:var(--tx2);text-decoration:none;cursor:pointer;transition:.2s}
+.nv-l{display:flex;gap:4px;align-items:center;justify-content:center;flex:1;position:absolute;left:50%;transform:translateX(-50%)}
+.nv-l a{padding:6px 16px;border-radius:8px;font-size:12px;font-weight:600;color:var(--tx2);text-decoration:none;cursor:pointer;transition:.2s;letter-spacing:.3px}
 .nv-l a:hover{color:var(--tx);background:rgba(106,13,173,.08)}
-.nv-s a{padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;border:1px solid rgba(106,13,173,.15);color:var(--tx2);cursor:pointer;transition:.2s}
-.nv-s a:hover{background:var(--purple);border-color:var(--purple);color:#fff}
+.nv-s{display:flex;gap:4px;align-items:center;flex:0 0 auto}
 
 /* ===== HERO ===== */
 .hero{min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;position:relative;overflow:hidden}
@@ -154,7 +153,7 @@ footer a{color:var(--blue);text-decoration:none;font-weight:600}
 <a onclick="smooth('modes')">Режимы</a>
 <a onclick="smooth('news')">Новости</a>
 </div>
-<div class="nv-s"><a href="https://vk.com/mcubic" target="_blank">VK</a></div>
+<div class="nv-s"><a href="https://vk.com/mcubic" target="_blank" style="padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;border:1px solid rgba(106,13,173,.15);color:var(--tx2);cursor:pointer;transition:.2s">VK</a></div>
 </nav>
 
 <!-- HERO -->
