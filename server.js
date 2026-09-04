@@ -18,7 +18,7 @@ const RCON_HOST = process.env.RCON_HOST || '65.21.24.203';
 const RCON_PORT = parseInt(process.env.RCON_PORT || '25727');
 const RCON_PASS = process.env.RCON_PASS || 'gCVELd59Gz';
 
-const CRYSTAL_MERCHANT = process.env.CRYSTAL_MERCHANT || 'migoy34';
+const CRYSTAL_MERCHANT = process.env.CRYSTAL_MERCHANT || '141735';
 const CRYSTAL_SECRET = process.env.CRYSTAL_SECRET || '0e300c433cdccd75fdaf8ad330767eddfbea5b43';
 const CRYSTAL_SALT = process.env.CRYSTAL_SALT || '25e67b70b62eea85a2cb6b472acf2c87fc12dff0';
 const ADMIN_KEY = process.env.ADMIN_KEY || 'mcubic2026';
